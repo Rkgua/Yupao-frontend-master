@@ -1,0 +1,7 @@
+{
+  "teamStatus": [
+    { "label": "公开", "value": 0 },
+    { "label": "私有", "value": 1 },
+    { "label": "加密", "value": 2 }
+  ]
+}
