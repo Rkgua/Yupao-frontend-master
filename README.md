@@ -15,7 +15,7 @@
 
 #### 核心功能模块
 
-1. 用户模块
+1. 1.1用户模块
    用户登录注册,个人信息查看与编辑,个人中心管理
    2.2 匹配模块
    普通模式：分页推荐用户列表,心动模式：基于标签的智能匹配推荐,标签搜索：多条件树形标签筛选
@@ -24,7 +24,11 @@
    ![alt text](image.png)
    ![alt text](image-1.png)
    ![alt text](image-2.png)
-   ![alt text](image-3.png)
+   ![alt text](image-3.png) 2.心动模式
+   选择感兴趣的标签
+   ![alt text](image-4.png)
+   开启心动模式筛选用户
+   ![alt text](image-5.png)
 
 #### 主要是学习项目结构设计
 
