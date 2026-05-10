@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import myAxios, { ApiResponse } from "../plugins/myAxios";
 import { Toast } from "vant";
@@ -24,11 +24,15 @@ const isMatchMode = ref<boolean>(false);
 const userList = ref([]);
 const loading = ref(true);
 
+const parseTags = (tagsStr: string | undefined | null): string[] => {
+  if (!tagsStr) return [];
+  try { return JSON.parse(tagsStr); } catch { return []; }
+};
+
 /**
  * 加载数据
  */
 const loadData = async () => {
-  // 检查登录状态
   const currentUserCheck = await getCurrentUser();
   if (!currentUserCheck) {
     router.push("/user/login");
@@ -37,67 +41,38 @@ const loadData = async () => {
 
   let userListData;
   loading.value = true;
-  // 心动模式，根据标签匹配用户
   if (isMatchMode.value) {
-    const num = 10;
-    // 获取当前用户信息
-    const currentUser = currentUserCheck;
-    // 解析用户自己的标签和感兴趣的标签
-    let ownTags: string[] = [];
-    let interestedTags: string[] = [];
-    if (currentUser) {
-      if (currentUser.tags) {
-        try {
-          ownTags = JSON.parse(currentUser.tags);
-        } catch {
-          ownTags = [];
-        }
-      }
-      if (currentUser.interestedTags) {
-        try {
-          interestedTags = JSON.parse(currentUser.interestedTags);
-        } catch {
-          interestedTags = [];
-        }
-      }
-    }
+    const ownTags = parseTags(currentUserCheck.tags);
+    const interestedTags = parseTags(currentUserCheck.interestedTags);
     userListData = await myAxios
       .post("/user/match/tags", {
-        num,
+        num: 10,
         ownTags,
         interestedTags,
       })
-      .then(function (response) {
-        return response?.data;
-      })
-      .catch(function (error) {
-        Toast.fail("请求失败");
-      });
+      .then((r: any) => r?.data)
+      .catch(() => { Toast.fail("请求失败"); return null; });
   } else {
-    // 普通模式，直接分页查询用户
     userListData = await myAxios
       .get("/user/recommend", {
-        params: {
-          pageSize: 8,
-          pageNum: 1,
-        },
+        params: { pageSize: 8, pageNum: 1 },
       })
-      .then(function (response) {
-        return response?.data?.records;
-      })
-      .catch(function (error) {
-        Toast.fail("请求失败");
-      });
+      .then((r: any) => r?.data?.records)
+      .catch(() => { Toast.fail("请求失败"); return null; });
   }
   if (userListData) {
+    userListData.forEach((user: UserType) => {
+      if (typeof user.tags === 'string') {
+        user.tags = parseTags(user.tags);
+      }
+    });
     userList.value = userListData;
   }
   loading.value = false;
 };
 
-watchEffect(() => {
-  loadData();
-});
+watch(isMatchMode, () => { loadData(); });
+onMounted(() => { loadData(); });
 </script>
 
 <style scoped></style>

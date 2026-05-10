@@ -88,6 +88,11 @@
       <van-cell title="我加入的队伍" is-link to="/user/team/join" :value="joinedTeamName || '暂未加入队伍'" />
     </van-cell-group>
 
+    <!-- 退出登录 -->
+    <div style="padding: 16px; margin-top: 8px;">
+      <van-button type="danger" block @click="onLogout">退出登录</van-button>
+    </div>
+
     <!-- 性别选择弹窗 -->
     <van-action-sheet v-model:show="showGenderPicker" :actions="genderOptions" @select="onGenderSelect" cancel-text="取消" />
   </template>
@@ -138,6 +143,17 @@ const displayTags = computed(() => {
 });
 
 const router = useRouter();
+
+// 退出登录
+const onLogout = async () => {
+  const res: ApiResponse<number> = await myAxios.post('/user/logout');
+  if (res?.code === 0) {
+    Toast.success('已退出');
+    router.push('/user/login');
+  } else {
+    Toast.fail('退出失败');
+  }
+};
 
 // 性别选择
 const onGenderSelect = async (action: { name: string; value: number }) => {
