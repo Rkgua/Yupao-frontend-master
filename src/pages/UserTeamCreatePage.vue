@@ -2,7 +2,7 @@
   <div id="teamPage">
     <van-search v-model="searchText" placeholder="搜索队伍" @search="onSearch" />
     <van-button type="primary" @click="doJoinTeam">创建队伍</van-button>
-    <team-card-list :teamList="teamList" @refresh="listTeam" />
+    <team-card-list :teamList="teamList" @refresh="onRefresh" />
     <van-empty v-if="teamList?.length < 1" description="数据为空"/>
   </div>
 </template>
@@ -54,6 +54,10 @@ onMounted( () => {
 
 const onSearch = (val) => {
   listTeam(val);
+};
+
+const onRefresh = () => {
+  listTeam(searchText.value);
 };
 
 </script>

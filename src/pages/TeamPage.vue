@@ -16,7 +16,7 @@
       icon="plus"
       @click="toAddTeam"
     />
-    <team-card-list :teamList="teamList" @refresh="listTeam" />
+    <team-card-list :teamList="teamList" @refresh="onRefresh" />
     <van-empty v-if="teamList?.length < 1" description="数据为空" />
   </div>
 </template>
@@ -31,19 +31,19 @@ import { Toast } from "vant";
 const active = ref("public");
 const router = useRouter();
 const searchText = ref("");
+const currentStatus = ref(0);
 
 /**
  * 切换查询状态
  * @param name
  */
 const onTabChange = (name) => {
-  // 查公开
   if (name === "public") {
-    listTeam(searchText.value, 0);
+    currentStatus.value = 0;
   } else {
-    // 查加密
-    listTeam(searchText.value, 2);
+    currentStatus.value = 2;
   }
+  listTeam(searchText.value, currentStatus.value);
 };
 
 // 跳转到创建队伍页
@@ -78,11 +78,15 @@ const listTeam = async (val = "", status = 0) => {
 
 // 页面加载时只触发一次
 onMounted(() => {
-  listTeam();
+  listTeam("", currentStatus.value);
 });
 
 const onSearch = (val) => {
-  listTeam(val);
+  listTeam(val, currentStatus.value);
+};
+
+const onRefresh = () => {
+  listTeam(searchText.value, currentStatus.value);
 };
 </script>
 
