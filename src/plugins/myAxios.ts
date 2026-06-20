@@ -15,7 +15,7 @@ const isDev = import.meta.env.MODE === "development";
 // 使用Omit移除AxiosInstance的原始方法避免类型冲突
 // 拦截器已返回 response.data，类型为 ApiResponse
 const myAxios = axios.create({
-  baseURL: isDev ? "http://localhost:8080/api" : "线上地址",
+  baseURL: isDev ? "http://localhost:8080/api" : "/api",
 }) as unknown as {
   get<T = any>(url: string, config?: any): Promise<ApiResponse<T>>;
   post<T = any>(url: string, data?: any, config?: any): Promise<ApiResponse<T>>;
